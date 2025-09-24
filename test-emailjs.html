@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmailJS Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    <h1>EmailJS Direct Test</h1>
+    <button onclick="testEmailJS()">Test EmailJS</button>
+    <div id="result"></div>
+
+    <script>
+        // Initialize EmailJS with your public key
+        emailjs.init({
+            publicKey: '_ahCs4nrRIIr_1d6n'
+        });
+
+        function testEmailJS() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+
+            const templateParams = {
+                to_email: 'your-email@example.com', // Replace with your email
+                to_name: 'Test User',
+                subject: 'Test Email from CatCare',
+                message: 'This is a test email to verify EmailJS is working!',
+                cat_name: 'Test Cat',
+                scheduled_time: new Date().toLocaleString(),
+                reminder_type: 'test',
+                app_name: 'CatCare Scheduler'
+            };
+
+            emailjs.send('service_sg3gmqr', 'template_catcare', templateParams)
+                .then(function(response) {
+                    resultDiv.innerHTML = '<p style="color: green;">✅ SUCCESS! Email sent successfully!</p><p>Status: ' + response.status + '</p>';
+                    console.log('SUCCESS!', response.status, response.text);
+                })
+                .catch(function(error) {
+                    resultDiv.innerHTML = '<p style="color: red;">❌ ERROR: ' + error.text + '</p>';
+                    console.error('FAILED...', error);
+                });
+        }
+    </script>
+</body>
+</html>
