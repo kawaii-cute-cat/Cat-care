@@ -1,3 +1,18 @@
+## Vercel deployment (SPA)
+
+This project uses a SPA router. To avoid 404 on reload, we ship `vercel.json` with a rewrite to `index.html`. We also use HashRouter for robustness.
+
+## Supabase setup
+
+See `EMAILJS_SERVICE_SETUP.md` for SQL schema, RLS, and env vars.
+
+## AI & integrations (stubs)
+
+- `src/pages/Assistant.tsx`: basic chat UI
+- `src/services/AssistantService.ts`: plug your LLM provider
+- `src/services/PlacesService.ts`: integrate Google Places or OSM
+- `src/services/CalendarService.ts`: exports `.ics`
+- `src/services/VoiceService.ts`: basic Web Speech API
 # Cat Care Scheduler & Reminder
 
 A comprehensive web application for managing your cat's care schedule, including feeding, medications, vet appointments, and grooming reminders.

@@ -24,6 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Cat Profiles', href: '/app/cats', icon: Cat },
     { name: 'Schedule', href: '/app/schedule', icon: Calendar },
     { name: 'Reminders', href: '/app/reminders', icon: Bell },
+    { name: 'Assistant', href: '/app/assistant', icon: Bell },
     { name: 'Settings', href: '/app/settings', icon: SettingsIcon },
   ];
 

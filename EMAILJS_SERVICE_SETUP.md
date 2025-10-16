@@ -1,3 +1,64 @@
+## Supabase setup (fresh)
+
+1) In Supabase project, create tables:
+
+```sql
+create table profiles (
+  id uuid primary key,
+  email text unique,
+  created_at timestamp with time zone default now()
+);
+
+create table cats (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references profiles(id) on delete cascade,
+  name text not null,
+  breed text,
+  weight_kg numeric,
+  created_at timestamp with time zone default now()
+);
+
+create table reminders (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references profiles(id) on delete cascade,
+  title text not null,
+  due_at timestamp with time zone not null,
+  completed boolean default false,
+  created_at timestamp with time zone default now()
+);
+```
+
+2) RLS policies (enable RLS on all tables):
+
+```sql
+alter table profiles enable row level security;
+alter table cats enable row level security;
+alter table reminders enable row level security;
+
+create policy "profiles self access" on profiles
+  for select using (auth.uid() = id);
+
+create policy "cats by owner" on cats
+  for select using (auth.uid() = owner_id)
+  using (auth.uid() = owner_id);
+
+create policy "reminders by owner" on reminders
+  for select using (auth.uid() = owner_id)
+  using (auth.uid() = owner_id);
+```
+
+3) Environment variables in `.env` or Vercel:
+
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+4) Client usage:
+
+```ts
+import { supabase } from './lib/supabaseClient'
+```
 # 🔧 EmailJS Service Setup - Fix Mail Server Connection
 
 ## ❌ **Current Issue:**

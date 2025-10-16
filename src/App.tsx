@@ -9,6 +9,7 @@ import CatProfiles from './pages/CatProfiles'
 import Schedule from './pages/Schedule'
 import Reminders from './pages/Reminders'
 import Settings from './pages/Settings'
+import Assistant from './pages/Assistant'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
                   <Route path="cats" element={<CatProfiles />} />
                   <Route path="schedule" element={<Schedule />} />
                   <Route path="reminders" element={<Reminders />} />
+                  <Route path="assistant" element={<Assistant />} />
                   <Route path="settings" element={<Settings />} />
                 </Routes>
               </Layout>
