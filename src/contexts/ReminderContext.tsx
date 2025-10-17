@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, ReactNode, useEffect } fr
 import { Reminder } from '../types';
 import { addDays, addWeeks, addMonths, isBefore, startOfDay } from 'date-fns';
 import { notificationService } from '../services/NotificationService';
+import { SupabaseRepo } from '../services/SupabaseRepo'
 
 interface ReminderState {
   reminders: Reminder[];
@@ -165,6 +166,34 @@ interface ReminderProviderProps {
 export const ReminderProvider: React.FC<ReminderProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reminderReducer, initialState);
 
+  // Load reminders from localStorage
+  useEffect(() => {
+    (async () => {
+      if (SupabaseRepo.isEnabled()) {
+        const list = await SupabaseRepo.listReminders()
+        if (list.length) dispatch({ type: 'SET_REMINDERS', payload: list })
+      } else {
+        const saved = localStorage.getItem('reminders');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved).map((r: any) => ({
+              ...r,
+              scheduledTime: new Date(r.scheduledTime),
+              createdAt: new Date(r.createdAt),
+              updatedAt: new Date(r.updatedAt)
+            }));
+            dispatch({ type: 'SET_REMINDERS', payload: parsed });
+          } catch {}
+        }
+      }
+    })()
+  }, []);
+
+  // Persist reminders to localStorage
+  useEffect(() => {
+    localStorage.setItem('reminders', JSON.stringify(state.reminders));
+  }, [state.reminders]);
+
   const addReminder = (reminderData: Omit<Reminder, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newReminder: Reminder = {
       ...reminderData,
@@ -173,6 +202,8 @@ export const ReminderProvider: React.FC<ReminderProviderProps> = ({ children }) 
       updatedAt: new Date(),
     };
     dispatch({ type: 'ADD_REMINDER', payload: newReminder });
+
+    SupabaseRepo.addReminder(reminderData).catch(() => {})
 
     // Schedule notification for the new reminder
     if (newReminder.notificationEnabled) {
@@ -188,10 +219,12 @@ export const ReminderProvider: React.FC<ReminderProviderProps> = ({ children }) 
   const updateReminder = (reminder: Reminder) => {
     const updatedReminder = { ...reminder, updatedAt: new Date() };
     dispatch({ type: 'UPDATE_REMINDER', payload: updatedReminder });
+    SupabaseRepo.updateReminder(updatedReminder).catch(() => {})
   };
 
   const deleteReminder = (id: string) => {
     dispatch({ type: 'DELETE_REMINDER', payload: id });
+    SupabaseRepo.deleteReminder(id).catch(() => {})
   };
 
   const toggleReminder = (id: string) => {

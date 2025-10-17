@@ -1,16 +1,25 @@
 import React, { useState } from 'react'
+import AssistantService, { AssistantMessage } from '../services/AssistantService'
 
 const Assistant: React.FC = () => {
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
+  const [messages, setMessages] = useState<Array<AssistantMessage>>([
     { role: 'assistant', content: 'Hi! I can help schedule vet, grooming, or pet store appointments near you and answer questions.' },
   ])
   const [input, setInput] = useState('')
+  const [sending, setSending] = useState(false)
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const trimmed = input.trim()
     if (!trimmed) return
-    setMessages(m => [...m, { role: 'user', content: trimmed }, { role: 'assistant', content: 'Thanks! I will search nearby options and propose times. (Stub)' }])
+    setMessages(m => [...m, { role: 'user', content: trimmed }])
     setInput('')
+    setSending(true)
+    try {
+      const reply = await AssistantService.reply([...messages, { role: 'user', content: trimmed }])
+      setMessages(m => [...m, reply])
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -37,7 +46,7 @@ const Assistant: React.FC = () => {
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') sendMessage() }}
           />
-          <button className="btn-primary" onClick={sendMessage}>Send</button>
+          <button className="btn-primary disabled:opacity-60" onClick={sendMessage} disabled={sending}>{sending ? 'Thinking…' : 'Send'}</button>
         </div>
       </div>
     </div>

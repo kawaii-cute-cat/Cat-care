@@ -125,14 +125,14 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
       />
       
       {/* Side panel */}
-      <div className="fixed right-0 top-0 h-full w-96 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out border-l border-gray-200">
+      <div className="fixed right-0 top-0 h-full w-96 bg-white dark:bg-gray-800 shadow-xl z-50 transform transition-transform duration-300 ease-in-out border-l border-gray-200 dark:border-gray-700">
         <div className="h-full overflow-y-auto p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">{title}</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
             <button
               type="button"
               onClick={onClose}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               ✕
             </button>

@@ -136,11 +136,11 @@ const Schedule: React.FC = () => {
       {viewMode === 'week' && (
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Weekly Schedule</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Weekly Schedule</h2>
             <div className="flex items-center space-x-4">
               <button
                 onClick={prevWeek}
-                className="p-2 rounded-lg hover:bg-gray-100"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -149,7 +149,7 @@ const Schedule: React.FC = () => {
               </span>
               <button
                 onClick={nextWeek}
-                className="p-2 rounded-lg hover:bg-gray-100"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -164,7 +164,7 @@ const Schedule: React.FC = () => {
               return (
                 <div key={date.toISOString()} className="space-y-3">
                   <div className={`text-center p-2 rounded-lg ${
-                    isCurrentDay ? 'bg-primary-100 text-primary-700' : 'bg-gray-50'
+                    isCurrentDay ? 'bg-primary-100 text-primary-700' : 'bg-gray-50 dark:bg-gray-700 dark:text-gray-200'
                   }`}>
                     <div className="text-sm font-medium">
                       {format(date, 'EEE')}
@@ -176,7 +176,7 @@ const Schedule: React.FC = () => {
                   
                   <div className="space-y-2">
                     {dayReminders.length === 0 ? (
-                      <div className="text-center py-4 text-gray-400">
+                      <div className="text-center py-4 text-gray-400 dark:text-gray-500">
                         <Clock className="w-6 h-6 mx-auto mb-2" />
                         <p className="text-xs">No reminders</p>
                       </div>
@@ -205,11 +205,11 @@ const Schedule: React.FC = () => {
       {viewMode === 'month' && (
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Monthly Schedule</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Monthly Schedule</h2>
             <div className="flex items-center space-x-4">
               <button
                 onClick={prevMonth}
-                className="p-2 rounded-lg hover:bg-gray-100"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -218,7 +218,7 @@ const Schedule: React.FC = () => {
               </span>
               <button
                 onClick={nextMonth}
-                className="p-2 rounded-lg hover:bg-gray-100"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -229,7 +229,7 @@ const Schedule: React.FC = () => {
           <div className="grid grid-cols-7 gap-1">
             {/* Day Headers */}
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-              <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 bg-gray-50 rounded">
+              <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 bg-gray-50 dark:bg-gray-700 dark:text-gray-300 rounded">
                 {day}
               </div>
             ))}
@@ -250,12 +250,12 @@ const Schedule: React.FC = () => {
                 return (
                   <div
                     key={date.toISOString()}
-                    className={`min-h-[120px] p-2 border border-gray-200 ${
-                      isCurrentMonth ? 'bg-white' : 'bg-gray-50'
+                    className={`min-h-[120px] p-2 border border-gray-200 dark:border-gray-700 ${
+                      isCurrentMonth ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-700'
                     } ${isCurrentDay ? 'ring-2 ring-primary-500' : ''}`}
                   >
                     <div className={`text-sm font-medium mb-1 ${
-                      isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
+                      isCurrentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'
                     } ${isCurrentDay ? 'text-primary-700' : ''}`}>
                       {format(date, 'd')}
                     </div>

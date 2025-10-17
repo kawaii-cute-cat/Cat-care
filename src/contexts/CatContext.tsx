@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { SupabaseRepo } from '../services/SupabaseRepo'
 import { Cat } from '../types';
 
 interface CatState {
@@ -73,6 +74,29 @@ interface CatProviderProps {
 export const CatProvider: React.FC<CatProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(catReducer, initialState);
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    (async () => {
+      if (SupabaseRepo.isEnabled()) {
+        const cats = await SupabaseRepo.listCats()
+        if (cats.length) dispatch({ type: 'SET_CATS', payload: cats })
+      } else {
+        const saved = localStorage.getItem('cats');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            dispatch({ type: 'SET_CATS', payload: parsed });
+          } catch {}
+        }
+      }
+    })()
+  }, []);
+
+  // Persist to localStorage on change
+  useEffect(() => {
+    localStorage.setItem('cats', JSON.stringify(state.cats));
+  }, [state.cats]);
+
   const addCat = (catData: Omit<Cat, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newCat: Cat = {
       ...catData,
@@ -81,15 +105,19 @@ export const CatProvider: React.FC<CatProviderProps> = ({ children }) => {
       updatedAt: new Date(),
     };
     dispatch({ type: 'ADD_CAT', payload: newCat });
+    // Fire and forget to Supabase
+    SupabaseRepo.addCat(catData).catch(() => {})
   };
 
   const updateCat = (cat: Cat) => {
     const updatedCat = { ...cat, updatedAt: new Date() };
     dispatch({ type: 'UPDATE_CAT', payload: updatedCat });
+    SupabaseRepo.updateCat(updatedCat).catch(() => {})
   };
 
   const deleteCat = (id: string) => {
     dispatch({ type: 'DELETE_CAT', payload: id });
+    SupabaseRepo.deleteCat(id).catch(() => {})
   };
 
   const getCatById = (id: string) => {
