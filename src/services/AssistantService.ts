@@ -8,12 +8,13 @@ import CalendarService from './CalendarService'
 
 class AssistantService {
   async reply(history: AssistantMessage[]): Promise<AssistantMessage> {
-    const last = history[history.length - 1]?.content.toLowerCase()
+    try {
+      const last = history[history.length - 1]?.content.toLowerCase()
 
-    // Simple rule-based intent detection
-    if (!last || last.length === 0) {
-      return { role: 'assistant', content: 'How can I help today?' }
-    }
+      // Simple rule-based intent detection
+      if (!last || last.length === 0) {
+        return { role: 'assistant', content: 'How can I help today?' }
+      }
 
     if (/(hi|hello|hey|yo)\b/.test(last)) {
       return { role: 'assistant', content: 'Hi! I can find nearby vets, groomers, or pet stores and book appointments. What do you need?' }
@@ -53,6 +54,10 @@ class AssistantService {
     }
 
     return { role: 'assistant', content: 'I can book vet/grooming, find pet stores, create calendar invites, and answer support questions. Try: "Book me a vet appointment on 2025-11-01 10:00"' }
+    } catch (error) {
+      console.warn('Assistant error:', error)
+      return { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }
+    }
   }
 }
 

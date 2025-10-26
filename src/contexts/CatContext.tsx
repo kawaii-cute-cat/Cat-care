@@ -77,10 +77,22 @@ export const CatProvider: React.FC<CatProviderProps> = ({ children }) => {
   // Load from localStorage on mount
   useEffect(() => {
     (async () => {
-      if (SupabaseRepo.isEnabled()) {
-        const cats = await SupabaseRepo.listCats()
-        if (cats.length) dispatch({ type: 'SET_CATS', payload: cats })
-      } else {
+      try {
+        if (SupabaseRepo.isEnabled()) {
+          const cats = await SupabaseRepo.listCats()
+          if (cats.length) dispatch({ type: 'SET_CATS', payload: cats })
+        } else {
+          const saved = localStorage.getItem('cats');
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              dispatch({ type: 'SET_CATS', payload: parsed });
+            } catch {}
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load cats:', error)
+        // Fallback to localStorage
         const saved = localStorage.getItem('cats');
         if (saved) {
           try {

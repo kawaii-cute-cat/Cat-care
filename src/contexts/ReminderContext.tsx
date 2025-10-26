@@ -169,10 +169,27 @@ export const ReminderProvider: React.FC<ReminderProviderProps> = ({ children }) 
   // Load reminders from localStorage
   useEffect(() => {
     (async () => {
-      if (SupabaseRepo.isEnabled()) {
-        const list = await SupabaseRepo.listReminders()
-        if (list.length) dispatch({ type: 'SET_REMINDERS', payload: list })
-      } else {
+      try {
+        if (SupabaseRepo.isEnabled()) {
+          const list = await SupabaseRepo.listReminders()
+          if (list.length) dispatch({ type: 'SET_REMINDERS', payload: list })
+        } else {
+          const saved = localStorage.getItem('reminders');
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved).map((r: any) => ({
+                ...r,
+                scheduledTime: new Date(r.scheduledTime),
+                createdAt: new Date(r.createdAt),
+                updatedAt: new Date(r.updatedAt)
+              }));
+              dispatch({ type: 'SET_REMINDERS', payload: parsed });
+            } catch {}
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load reminders:', error)
+        // Fallback to localStorage
         const saved = localStorage.getItem('reminders');
         if (saved) {
           try {

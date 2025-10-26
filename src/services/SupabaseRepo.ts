@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabaseClient'
 import type { Cat, Reminder } from '../types'
 
 function hasSupabaseEnv(): boolean {
-  return Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY)
+  return Boolean((import.meta as any).env?.VITE_SUPABASE_URL && (import.meta as any).env?.VITE_SUPABASE_ANON_KEY)
 }
 
 function getDeviceUserId(): string {
