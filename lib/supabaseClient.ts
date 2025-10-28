@@ -14,9 +14,14 @@ const createDummyClient = () => ({
   })
 })
 
-export const supabase = (supabaseUrl && supabaseAnonKey) 
+const client = (supabaseUrl && supabaseAnonKey)
   ? createClient(supabaseUrl, supabaseAnonKey)
-  : createDummyClient() as any
+  : createDummyClient()
+
+// eslint-disable-next-line no-console
+console.log('[Supabase] URL present:', Boolean(supabaseUrl), 'Key present:', Boolean(supabaseAnonKey))
+
+export const supabase = client as any
 
 export type Tables = {
   profiles: {
