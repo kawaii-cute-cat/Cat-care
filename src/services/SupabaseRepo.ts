@@ -33,7 +33,7 @@ export const SupabaseRepo = {
       .select('*')
       .eq('owner_id', owner_id)
       .order('created_at', { ascending: true })
-    if (error || !data) return []
+    if (error || !data) { console.warn('[Supabase] listCats error:', error); return [] }
     return data.map((row: any) => ({
       id: row.id,
       name: row.name,
@@ -59,8 +59,12 @@ export const SupabaseRepo = {
       color: cat.color ?? null,
       microchip: cat.microchip ?? null
     }
-    const { data, error } = await supabase.from('cats').insert(insert).select('*').single()
-    if (error || !data) return null
+    let data: any = null; let error: any = null
+    try {
+      const resp: any = await (supabase as any).from('cats').insert(insert).select('*').single()
+      data = resp.data; error = resp.error
+    } catch (e) { error = e }
+    if (error || !data) { console.warn('[Supabase] addCat error:', error); return null }
     return {
       id: data.id,
       name: data.name,
@@ -77,18 +81,18 @@ export const SupabaseRepo = {
 
   async updateCat(cat: Cat): Promise<void> {
     if (!this.isEnabled()) return
-    await supabase.from('cats').update({
+    try { await supabase.from('cats').update({
       name: cat.name,
       breed: cat.breed,
       weight_kg: cat.weight,
       color: cat.color,
       microchip: cat.microchip ?? null
-    }).eq('id', cat.id)
+    }).eq('id', cat.id) } catch (e) { console.warn('[Supabase] updateCat error:', e) }
   },
 
   async deleteCat(id: string): Promise<void> {
     if (!this.isEnabled()) return
-    await supabase.from('cats').delete().eq('id', id)
+    try { await supabase.from('cats').delete().eq('id', id) } catch (e) { console.warn('[Supabase] deleteCat error:', e) }
   },
 
   async listReminders(): Promise<Reminder[]> {
@@ -99,7 +103,7 @@ export const SupabaseRepo = {
       .select('*')
       .eq('owner_id', owner_id)
       .order('created_at', { ascending: true })
-    if (error || !data) return []
+    if (error || !data) { console.warn('[Supabase] listReminders error:', error); return [] }
     return data.map((row: any) => ({
       id: row.id,
       catId: row.cat_id ?? row.catId ?? '',
@@ -131,8 +135,12 @@ export const SupabaseRepo = {
       is_active: rem.isActive ?? true,
       notification_enabled: rem.notificationEnabled ?? true
     }
-    const { data, error } = await supabase.from('reminders').insert(insert).select('*').single()
-    if (error || !data) return null
+    let data: any = null; let error: any = null
+    try {
+      const resp: any = await (supabase as any).from('reminders').insert(insert).select('*').single()
+      data = resp.data; error = resp.error
+    } catch (e) { error = e }
+    if (error || !data) { console.warn('[Supabase] addReminder error:', error); return null }
     return {
       id: data.id,
       catId: data.cat_id,
@@ -151,7 +159,7 @@ export const SupabaseRepo = {
 
   async updateReminder(rem: Reminder): Promise<void> {
     if (!this.isEnabled()) return
-    await supabase.from('reminders').update({
+    try { await supabase.from('reminders').update({
       title: rem.title,
       description: rem.description ?? null,
       type: rem.type,
@@ -160,12 +168,12 @@ export const SupabaseRepo = {
       completed: rem.isCompleted,
       is_active: rem.isActive,
       notification_enabled: rem.notificationEnabled
-    }).eq('id', rem.id)
+    }).eq('id', rem.id) } catch (e) { console.warn('[Supabase] updateReminder error:', e) }
   },
 
   async deleteReminder(id: string): Promise<void> {
     if (!this.isEnabled()) return
-    await supabase.from('reminders').delete().eq('id', id)
+    try { await supabase.from('reminders').delete().eq('id', id) } catch (e) { console.warn('[Supabase] deleteReminder error:', e) }
   }
 }
 

@@ -22,20 +22,30 @@ class AssistantService {
 
     if (/book|schedule/.test(last) && /(vet|veterinary)/.test(last)) {
       const places = await PlacesService.findNearby('veterinary_care', 0, 0)
-      const suggestion = places.slice(0, 2).map(p => `• ${p.name} (${Math.round(p.distanceMeters)}m) - ${p.address}`).join('\n')
-      return { role: 'assistant', content: `Here are nearby vets:\n${suggestion}\nReply with a preferred date/time and I will create an .ics calendar invite.` }
+      if (places.length === 0) {
+        return { role: 'assistant', content: 'I could not find nearby vets. Please allow location access or tell me your city.' }
+      }
+      const best = places.sort((a,b) => a.distanceMeters - b.distanceMeters)[0]
+      const suggestion = places.slice(0, 3).map(p => `• ${p.name} (${Math.round(p.distanceMeters)}m)`).join('\n')
+      return { role: 'assistant', content: `I recommend: ${best.name} (${Math.round(best.distanceMeters)}m)\nAddress: ${best.address}\n\nOther options:\n${suggestion}\n\nReply with a preferred date/time and I will create an .ics calendar invite.` }
     }
 
     if (/book|schedule/.test(last) && /(groom|grooming)/.test(last)) {
       const places = await PlacesService.findNearby('groomer', 0, 0)
-      const suggestion = places.slice(0, 2).map(p => `• ${p.name} (${Math.round(p.distanceMeters)}m) - ${p.address}`).join('\n')
-      return { role: 'assistant', content: `Here are nearby groomers:\n${suggestion}\nReply with a preferred date/time and I will create an .ics calendar invite.` }
+      if (places.length === 0) {
+        return { role: 'assistant', content: 'I could not find nearby groomers. Please allow location access or tell me your city.' }
+      }
+      const best = places.sort((a,b) => a.distanceMeters - b.distanceMeters)[0]
+      const suggestion = places.slice(0, 3).map(p => `• ${p.name} (${Math.round(p.distanceMeters)}m)`).join('\n')
+      return { role: 'assistant', content: `I recommend: ${best.name} (${Math.round(best.distanceMeters)}m)\nAddress: ${best.address}\n\nOther options:\n${suggestion}\n\nReply with a preferred date/time and I will create an .ics calendar invite.` }
     }
 
     if (/pet store|petstore|food|litter/.test(last)) {
       const places = await PlacesService.findNearby('pet_store', 0, 0)
-      const suggestion = places.slice(0, 2).map(p => `• ${p.name} (${Math.round(p.distanceMeters)}m) - ${p.address}`).join('\n')
-      return { role: 'assistant', content: `Nearby pet stores:\n${suggestion}` }
+      if (places.length === 0) return { role: 'assistant', content: 'I could not find nearby pet stores. Please allow location access or tell me your city.' }
+      const best = places.sort((a,b) => a.distanceMeters - b.distanceMeters)[0]
+      const suggestion = places.slice(0, 3).map(p => `• ${p.name} (${Math.round(p.distanceMeters)}m)`).join('\n')
+      return { role: 'assistant', content: `Closest pet store: ${best.name} (${Math.round(best.distanceMeters)}m)\nAddress: ${best.address}\n\nOther options:\n${suggestion}` }
     }
 
     // Create calendar invite if date/time detected (very simple parse, expects YYYY-MM-DD HH:MM)
