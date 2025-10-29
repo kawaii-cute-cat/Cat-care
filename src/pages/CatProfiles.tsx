@@ -265,7 +265,7 @@ const CatProfiles: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    step="0.1"
+                    step="any"
                     value={formData.weight}
                     onChange={(e) => updateFormData({ weight: e.target.value })}
                     className="input-field"
@@ -419,8 +419,8 @@ const CatProfiles: React.FC = () => {
                         Weight (kg) *
                       </label>
                       <input
-                        type="number"
-                        step="0.1"
+                      type="number"
+                      step="any"
                         value={formData.weight}
                         onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                         className="input-field w-full"

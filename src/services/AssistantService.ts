@@ -21,7 +21,7 @@ class AssistantService {
     }
 
     if (/book|schedule/.test(last) && /(vet|veterinary)/.test(last)) {
-      const places = await PlacesService.findNearby('veterinary_care', 0, 0)
+      const places = await PlacesService.findNearby('veterinary_care')
       if (places.length === 0) {
         return { role: 'assistant', content: 'I could not find nearby vets. Please allow location access or tell me your city.' }
       }
@@ -31,7 +31,7 @@ class AssistantService {
     }
 
     if (/book|schedule/.test(last) && /(groom|grooming)/.test(last)) {
-      const places = await PlacesService.findNearby('groomer', 0, 0)
+      const places = await PlacesService.findNearby('groomer')
       if (places.length === 0) {
         return { role: 'assistant', content: 'I could not find nearby groomers. Please allow location access or tell me your city.' }
       }
@@ -41,7 +41,7 @@ class AssistantService {
     }
 
     if (/pet store|petstore|food|litter/.test(last)) {
-      const places = await PlacesService.findNearby('pet_store', 0, 0)
+      const places = await PlacesService.findNearby('pet_store')
       if (places.length === 0) return { role: 'assistant', content: 'I could not find nearby pet stores. Please allow location access or tell me your city.' }
       const best = places.sort((a,b) => a.distanceMeters - b.distanceMeters)[0]
       const suggestion = places.slice(0, 3).map(p => `• ${p.name} (${Math.round(p.distanceMeters)}m)`).join('\n')

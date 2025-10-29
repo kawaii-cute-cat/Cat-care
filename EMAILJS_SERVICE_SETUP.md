@@ -47,6 +47,31 @@ create policy "reminders by owner" on reminders
   using (auth.uid() = owner_id);
 ```
 
+### If you are not using Supabase Auth (anon key only)
+
+For demos without auth, `auth.uid()` is null, so the policies above block access. Use permissive policies temporarily so the anon key can read/write:
+
+```sql
+-- WARNING: Demo-only permissive policies. Do not use in production.
+drop policy if exists "profiles self access" on profiles;
+drop policy if exists "cats by owner" on cats;
+drop policy if exists "reminders by owner" on reminders;
+
+create policy "profiles read anon" on profiles for select using (true);
+
+create policy "cats anon all" on cats
+  for select using (true)
+  for insert with check (true)
+  for update using (true)
+  for delete using (true);
+
+create policy "reminders anon all" on reminders
+  for select using (true)
+  for insert with check (true)
+  for update using (true)
+  for delete using (true);
+```
+
 3) Environment variables in `.env` or Vercel:
 
 ```
